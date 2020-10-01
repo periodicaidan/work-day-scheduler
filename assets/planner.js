@@ -14,24 +14,20 @@ const HOUR_TO_TIME = {
 
 window.onload = () => {
     $('#currentDay').text(NOW.format(DATETIME_FORMAT));
-    renderTimeBlock(9);
-    renderTimeBlock(10);
-    renderTimeBlock(11);
-    renderTimeBlock(12);
-    renderTimeBlock(13);
-    renderTimeBlock(14);
-    renderTimeBlock(15);
-    renderTimeBlock(16);
-    renderTimeBlock(17);
+
+    for (let hour in HOUR_TO_TIME) {
+        renderTimeBlock(hour);
+    }
 }
 
 function faIcon(icon) {
     return $('<i>').addClass(`fas fa-${icon}`);
 }
 
-function renderTimeBlock(hour, event) {
+function renderTimeBlock(hour) {
     let timeBlock = $('<div>')
         .addClass('row time-block')
+        .attr('data-hour', hour)
         .css('margin-top', '5px')
         .append(
             $('<div>')
@@ -41,10 +37,14 @@ function renderTimeBlock(hour, event) {
                 .attr('rows', 4)
                 .addClass('col description')
                 .addClass(relativeTimeOfDay(hour))
-                .val(event),
+                .val(loadEvent(hour)),
             $('<button>')
                 .addClass('col-1 saveBtn')
                 .append(faIcon('save'))
+                .on('click', function (e) {
+                    let event = $(`[data-hour=${hour}]`).children('textarea').val();
+                    saveEvent(hour, event);
+                })
         );
 
     $('.container').append(timeBlock);
@@ -66,6 +66,10 @@ function relativeTimeOfDay(hour) {
     }
 }
 
-$('.saveBtn').on('click', e => {
-    // TODO: Save the contents of TA
-})
+function saveEvent(hour, event) {
+    localStorage.setItem(`evt-${hour}`, event);
+}
+
+function loadEvent(hour) {
+    return localStorage.getItem(`evt-${hour}`) ?? '';
+}
