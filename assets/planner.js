@@ -1,4 +1,3 @@
-const DATETIME_FORMAT = 'dddd, MMMM Do';
 const NOW = moment();
 const HOUR_TO_TIME = {
     9: '9AM',
@@ -9,16 +8,16 @@ const HOUR_TO_TIME = {
     14: '2PM',
     15: '3PM',
     16: '4PM',
-    17: '5PM',
+    17: '5PM'
 }
 
-window.onload = () => {
-    $('#currentDay').text(NOW.format(DATETIME_FORMAT));
+$(document).ready(function () {
+    $('#currentDay').text(NOW.format('dddd, MMMM Do'));
 
     for (let hour in HOUR_TO_TIME) {
         renderTimeBlock(hour);
     }
-}
+});
 
 function faIcon(icon) {
     return $('<i>').addClass(`fas fa-${icon}`);
@@ -51,18 +50,13 @@ function renderTimeBlock(hour) {
 }
 
 function relativeTimeOfDay(hour) {
-    switch (Math.sign(NOW.hour() - hour)) {
-        // `hour` is earlier than `NOW`
-        case 1:
-            return 'past';
-
-        // `hour` is the same time as `NOW`
-        case 0:
-            return 'present';
-        
-        // `hour` is later than `NOW`
-        case -1:
-            return 'future';
+    let timeDiff = NOW.hour() - hour;
+    if (timeDiff > 0) {
+        return 'past';
+    } else if (timeDiff < 0) {
+        return 'future';
+    } else {
+        return 'present';
     }
 }
 
